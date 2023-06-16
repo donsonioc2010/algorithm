@@ -13,9 +13,10 @@ public class Main {
     StringBuffer sb = new StringBuffer();
     for (int i = 1; i < cntAry.length; i++) {
       int cnt = cntAry[i];
-      for (int j = 0; j < cnt; j++) {
-        sb.append(i + "\n");
-      }
+      if (cnt != 0)
+        for (int j = 0; j < cnt; j++) {
+          sb.append(i + "\n");
+        }
     }
     System.out.println(sb);
   }
