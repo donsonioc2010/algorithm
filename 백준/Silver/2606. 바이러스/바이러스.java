@@ -1,61 +1,55 @@
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.stream.IntStream;
 
+// 시작번호는 무조건 1번이다
 public class Main {
-    final static int START_PC = 1;
-    static int pcNum;
-    static int pcLine;
-    static boolean[] visited;
-    static boolean[][] mapAry;
-    static int virusPc = 0;
-    static Scanner sc = new Scanner(System.in);
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static void main(String[] args) {
-        pcNum = sc.nextInt();  // 100 이하
-        pcLine = sc.nextInt(); // Node 갯수 인풋
-
-        /* Validation */
-        if(pcNum > 100 || pcNum < 1) {
-            return;
-        }
-
-        /* 배열 선언 */
-        initAry();
-
-        /* 맵 제작 */
-        for(int i = 0 ; i < pcLine; i++) {
-            int to      = sc.nextInt();
-            int from    = sc.nextInt();
-            setLine(to, from);
-        }
-
-        dfs(START_PC);
-        System.out.println(virusPc-1);
+  public static void main(String[] args) throws Exception {
+    int N = Integer.parseInt(br.readLine());
+    int M = Integer.parseInt(br.readLine());
+    ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+    // 초기화, M미만이 아닌 M이하로 한 이유는 .get(0)을 사용하지 않기 위해서
+    for (int i = 0; i <= N; i++) {
+      list.add(new ArrayList<Integer>());
     }
 
-    /* 배열 선언 및 초기화 */
-    private static void initAry() {
-        visited = new boolean[pcNum + 1];
-        mapAry = new boolean[pcNum+1][pcNum+1];
-
-        for(int i = 0; i <= pcNum; i++) {
-            Arrays.fill(mapAry[i], false);
-        }
+    for (int i = 1; i <= M; i++) {
+      String[] fromTo = br.readLine().split(" ");
+      int from = Integer.parseInt(fromTo[0]);
+      int to = Integer.parseInt(fromTo[1]);
+      list.get(from).add(to);
+      list.get(to).add(from);
     }
 
-    /* 맵 제작 */
-    private static void setLine(int to, int from) {
-        mapAry[to][from] = mapAry[from][to] = true;
+    new dfs(list, N);
+  }
+}
+
+class dfs {
+  private ArrayList<ArrayList<Integer>> node;
+  private boolean[] visited;
+
+  public dfs(ArrayList<ArrayList<Integer>> node, int N) {
+    this.node = node;
+    this.visited = new boolean[N + 1];
+    Arrays.fill(visited, false);
+    dfsRun(1);
+    System.out.println(IntStream.range(1, N + 1).filter(i -> i != 1 && visited[i]).count());
+  }
+
+  private void dfsRun(int num) {
+    visited[num] = true;
+    ArrayList<Integer> numList = node.get(num);
+    for (int i = 0; i < numList.size(); i++) {
+      int idx = numList.get(i);
+      if (!visited[idx]) {
+        dfsRun(idx);
+      }
     }
 
-    private static void dfs(int num) {
-        visited[num] = true;
-        virusPc++;
-        for(int i = 0; i <= pcNum; i++) {
-            if(!visited[i] && mapAry[num][i]) { //mapAry[num][i] == true : 길이 있슴
-                dfs(i);
-            }
-        }
-    }
+  }
 }
