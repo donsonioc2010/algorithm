@@ -1,90 +1,60 @@
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Main {
-    private static int[] searchX = {0, 0, 1, -1};
-    private static int[] searchY = {1, -1 , 0, 0};
-    private static int[] houseAreaAry = new int[25 * 25];//집 크기들
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  private static int[] dx = { -1, 1, 0, 0 };
+  private static int[] dy = { 0, 0, -1, 1 };
+  private static String[][] map;
+  private static int sizeCnt = 0, N;
 
-    final static int MIN_LENGTH = 5;    // 최소치
-    final static int MAX_LENGTH = 25;   // 최대치
+  public static void main(String[] args) throws Exception {
+    N = Integer.parseInt(br.readLine());
+    map = new String[N + 1][N + 1];
+    Arrays.fill(map[0], "0");
+    ArrayList<Integer> size = new ArrayList<>();
 
-    static int mapLength;               // 맵 크기
-    static int totalHouseCnt = 0;       // 집의 총 갯수
+    for (int i = 1; i <= N; i++) {
+      String line = "0" + br.readLine();
+      String[] inputMapSplit = line.split("");
+      map[i] = inputMapSplit;
+    }
 
-    static int[][] mapAry;             // 지도
-    static boolean[][] visited;         // 방문 이력
-    static Scanner sc = new Scanner(System.in);
-
-    public static void main(String[] args) throws IOException {
-        mapLength = sc.nextInt();
-
-        /* Validation */
-        if(mapLength < MIN_LENGTH || mapLength > MAX_LENGTH) {
-            return;
+    for (int i = 1; i <= N; i++) {
+      for (int j = 1; j <= N; j++) {
+        if (map[i][j].equals("1")) {
+          dfs(i, j);
+          size.add(sizeCnt);
+          sizeCnt = 0;
         }
-
-        /* Map Init And BufferedReader Close*/
-        makeMap();
-        doRun();
-        resultPrint();
+      }
     }
 
-    private static void doRun() {
-        for(int i = 0; i < mapLength; i++) { // == x
-            for(int j = 0; j < mapLength; j++) { // == y
-                // [i][j]에 집이있고 방문을 안했을 때
-                if(mapAry[i][j] != 0 && !visited[i][j]) {
-                    areaSearch(i, j);
-                    totalHouseCnt++;
-                }
-            }
-        }
+    size.sort(Comparator.naturalOrder());
+    StringBuilder sb = new StringBuilder(size.size() + "\n");
+    for (int i = 0; i < size.size(); i++) {
+      sb.append(size.get(i) + "\n");
     }
 
-    /* 영역 조사 dfs */
-    private static void areaSearch(int x, int y) {
-        visited[x][y] = true;
-        houseAreaAry[totalHouseCnt]++;
-       for(int i = 0; i < 4; i++) {
-           int sxNum = x + searchX[i];
-           int syNum = y + searchY[i];
+    System.out.println(sb);
 
-           if(sxNum >= 0 && syNum >= 0 && sxNum < mapLength && syNum < mapLength) {
-               if(mapAry[sxNum][syNum] != 0 && !visited[sxNum][syNum]){
-                   areaSearch(sxNum, syNum);
-               }
-           }
-       }
+  }
 
+  private static void dfs(int y, int x) {
+    map[y][x] = "0";
+    sizeCnt++;
+
+    for (int i = 0; i < dx.length; i++) {
+      int tempY = y + dy[i];
+      int tempX = x + dx[i];
+
+      // 1부터 시작하니까 0은 그냥 확인안함.
+      if (tempX < map.length && tempY < map.length && map[tempY][tempX].equals("1")) {
+        dfs(tempY, tempX);
+      }
     }
-
-    private static void makeMap() {
-        initMap();
-        for(int i = 0; i < mapLength; i++) {
-            String line = sc.next();
-            for (int j = 0; j < mapLength; j++) {
-                mapAry[i][j] = line.charAt(j) - '0';
-            }
-        }
-    }
-
-    private static void initMap() {
-        mapAry = new int[mapLength][mapLength];
-        visited = new boolean[mapLength][mapLength];
-        for(int i = 0; i < mapLength; i++) {
-            Arrays.fill(mapAry[i], 0);
-            Arrays.fill(visited[i], false);
-        }
-    }
-
-    private static void resultPrint() {
-        System.out.println(totalHouseCnt);
-        Arrays.sort(houseAreaAry);
-        for(int i = 0; i < houseAreaAry.length; i++) {
-            if(houseAreaAry[i] != 0)
-                System.out.println(houseAreaAry[i]);
-        }
-    }
+  }
 }
