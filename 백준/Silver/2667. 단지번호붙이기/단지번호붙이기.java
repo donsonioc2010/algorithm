@@ -1,15 +1,16 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 public class Main {
   private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-  private static int[] dx = { -1, 1, 0, 0 };
-  private static int[] dy = { 0, 0, -1, 1 };
+  private static int[] dx = { 0, 0, -1, 1 };
+  private static int[] dy = { -1, 1, 0, 0, };
   private static String[][] map;
-  private static int sizeCnt = 0, N;
+  private static int N;
 
   public static void main(String[] args) throws Exception {
     N = Integer.parseInt(br.readLine());
@@ -26,9 +27,7 @@ public class Main {
     for (int i = 1; i <= N; i++) {
       for (int j = 1; j <= N; j++) {
         if (map[i][j].equals("1")) {
-          dfs(i, j);
-          size.add(sizeCnt);
-          sizeCnt = 0;
+          size.add(bfs(new xy(i, j)));
         }
       }
     }
@@ -43,18 +42,39 @@ public class Main {
 
   }
 
-  private static void dfs(int y, int x) {
-    map[y][x] = "0";
-    sizeCnt++;
+  private static int bfs(xy node) {
+    int area = 0;
+    LinkedList<xy> queue = new LinkedList<>();
+    queue.add(node);
+    while (!queue.isEmpty()) {
+      xy tempNode = queue.poll();
 
-    for (int i = 0; i < dx.length; i++) {
-      int tempY = y + dy[i];
-      int tempX = x + dx[i];
+      if (map[tempNode.y][tempNode.x].equals("0")) {
+        continue;
+      }
+      area++;
+      map[tempNode.y][tempNode.x] = "0";
 
-      // 1부터 시작하니까 0은 그냥 확인안함.
-      if (tempX < map.length && tempY < map.length && map[tempY][tempX].equals("1")) {
-        dfs(tempY, tempX);
+      for (int i = 0; i < dx.length; i++) {
+        int tempY = tempNode.y + dy[i];
+        int tempX = tempNode.x + dx[i];
+        // 1부터 시작하니까 0은 그냥 확인안함.
+        if (tempX < map.length && tempY < map.length && map[tempY][tempX].equals("1")) {
+
+          queue.add(new xy(tempY, tempX));
+        }
       }
     }
+    return area;
+  }
+}
+
+class xy {
+  public int y;
+  public int x;
+
+  public xy(int y, int x) {
+    this.y = y;
+    this.x = x;
   }
 }
