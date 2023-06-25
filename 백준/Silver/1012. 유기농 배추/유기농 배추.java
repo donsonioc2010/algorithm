@@ -1,103 +1,71 @@
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Main {
-    private static Scanner sc = new Scanner(System.in);
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    private static int t;		// 테스트케이스 개수
-    private static int m;		// 배추밭의 가로길이
-    private static int n;		// 배추밭의 세로길이
-    private static int k;		// 배추가 심어져 있는 위치와 갯수
+  private static int M, N, K; // 배추밭 가로, 세로, 심어진 갯수
 
-    private static int MIN_MN_VALUE = 1, MAX_MN_VALUE = 50;
-    private static int MIN_K_VALUE = 1, MAX_K_VALUE = 2500;
+  // 지도, 방문 저장 변수
+  private static boolean[][] map;
+  private static boolean[][] visited;
 
-    private static int bugCnt;			// 지렁이 Cnt;
+  private static int[] dx = { 0, 0, 1, -1 };
+  private static int[] dy = { 1, -1, 0, 0 };
 
-    private static boolean[][] map;
-    private static boolean[][] visited;
+  public static void main(String[] args) throws Exception {
+    StringBuilder sb = new StringBuilder();
+    int T = Integer.parseInt(br.readLine());
 
-    private static int[] searchX = {0, 0, 1, -1};
-    private static int[] searchY = {1, -1 , 0, 0};
+    // 실행횟수
+    for (int i = 0; i < T; i++) {
+      int bugCnt = 0;
+      String[] MNK = br.readLine().split(" ");
+      M = Integer.parseInt(MNK[0]);
+      N = Integer.parseInt(MNK[1]);
+      K = Integer.parseInt(MNK[2]);
 
-    public static void main(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        t = sc.nextInt();
+      // 혹시나 모른 초기화
+      map = new boolean[N][M];
+      visited = new boolean[N][M];
+      for (int j = 0; j < N; j++) {
+        Arrays.fill(map[j], false);
+        Arrays.fill(visited[j], false);
+      }
 
-        for(int i = 0 ; i < t; i++) {
-            bugCnt = 0;
-            inputMNK();
+      // Map그리기
+      String[] line = null;
+      for (int j = 0; j < K; j++) {
+        line = br.readLine().split(" ");
+        int y = Integer.parseInt(line[1]);
+        int x = Integer.parseInt(line[0]);
+        map[y][x] = true;
+      }
 
-            if(!validationInputNumber()) {
-                break;
-            }
-
-            makeCreep();
-            for(int j = 0; j < k; j++) {
-                int x = sc.nextInt();   // 가로
-                int y = sc.nextInt();   // 세로
-                makeCreep(x, y);
-            }
-
-            for(int x = 0; x < m; x++) {        //가로
-                for(int y = 0; y < n; y++) {    //세로
-                    if(!visited[x][y] && map[x][y]) {
-                        bugCnt++;
-                        dfs(x, y);
-                    }
-                }
-            }
-
-            sb.append(bugCnt+"\n");
+      for (int y = 0; y < N; y++) {
+        for (int x = 0; x < M; x++) {
+          if (!visited[y][x] && map[y][x]) {
+            bugCnt++;
+            dfs(y, x);
+          }
         }
-        System.out.println(sb.toString());
+      }
+      sb.append(bugCnt + "\n");
+    }
+    System.out.println(sb);
+  }
+
+  private static void dfs(int y, int x) {
+    visited[y][x] = true;
+    for (int i = 0; i < dx.length; i++) {
+      int tx = x - dx[i];
+      int ty = y - dy[i];
+
+      if ((tx >= 0 && tx < M && ty >= 0 && ty < N) && !visited[ty][tx] && map[ty][tx]) {
+        dfs(ty, tx);
+      }
     }
 
-    private static void dfs(int x, int y) {
-        visited[x][y] = true;
-        for(int i = 0; i < 4; i++) {
-            int dx = x - searchX[i];
-            int dy = y - searchY[i];
-
-            if((dx >= 0 && dx <= m-1 && dy >= 0 && dy <= n-1) && !visited[dx][dy] && map[dx][dy]) {
-                dfs(dx, dy);
-            }
-        }
-
-
-    }
-
-    // Init Map
-    private static void makeCreep() {
-        map     = new boolean[m][n];
-        visited = new boolean[m][n];
-
-        for(int i = 0; i< m; i++) {
-            Arrays.fill(map[i], false);
-            Arrays.fill(visited[i], false);
-        }
-    }
-
-    // Input Map Node
-    private static void makeCreep(int x, int y) {
-        map[x][y] = true;
-    }
-
-    // M, N, K Data Input
-    private static void inputMNK() {
-        m = sc.nextInt();
-        n = sc.nextInt();
-        k = sc.nextInt();
-    }
-
-    // Validation
-    private static boolean validationInputNumber() {
-        if((m >= MIN_MN_VALUE && m <= MAX_MN_VALUE) &&
-                (n >= MIN_MN_VALUE && n <= MAX_MN_VALUE ) &&
-                (k >= MIN_K_VALUE && k <= MAX_K_VALUE)) {
-            return true;
-        }
-        return false;
-    }
+  }
 }
