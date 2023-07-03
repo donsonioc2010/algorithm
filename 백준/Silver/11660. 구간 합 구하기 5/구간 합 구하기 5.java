@@ -1,41 +1,46 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+
 public class Main {
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-   public static void main(String[] args) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer stringTokenizer = new StringTokenizer(br.readLine());
+  private static int N, M;
 
-    int N = Integer.parseInt(stringTokenizer.nextToken()),    // 표 Line tn
-        M = Integer.parseInt(stringTokenizer.nextToken());    // 답을 구해야 하는 횟수
+  public static void main(String[] args) throws Exception {
+    String[] NM = br.readLine().split(" ");
+    N = Integer.parseInt(NM[0]);
+    M = Integer.parseInt(NM[1]);
 
-    int[][] S = new int[N + 1][N + 1];
-    int[][] A = new int[N + 1][N + 1];
+    int[][] map = new int[N + 1][N + 1];
 
     for (int i = 1; i <= N; i++) {
-      stringTokenizer = new StringTokenizer(br.readLine());
+      String[] line = br.readLine().split(" ");
       for (int j = 1; j <= N; j++) {
-        S[i][j] = Integer.parseInt(stringTokenizer.nextToken());
+        map[i][j] = Integer.parseInt(line[j - 1]);
       }
     }
 
-    //구간합 배열 생성
     for (int i = 1; i <= N; i++) {
       for (int j = 1; j <= N; j++) {
-        A[i][j] = A[i][j - 1] + A[i - 1][j] - A[i - 1][j - 1] + S[i][j];
+        map[i][j] = map[i][j] + map[i][j - 1];
       }
     }
-
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < M; i++) {
-      stringTokenizer = new StringTokenizer(br.readLine());
-      int x1 = Integer.parseInt(stringTokenizer.nextToken());
-      int y1 = Integer.parseInt(stringTokenizer.nextToken());
-      int x2 = Integer.parseInt(stringTokenizer.nextToken());
-      int y2 = Integer.parseInt(stringTokenizer.nextToken());
-      int result = A[x2][y2] - A[x1 - 1][y2] - A[x2][y1 - 1] + A[x1 - 1][y1 - 1];
-      System.out.println(result);
+      String[] order = br.readLine().split(" ");
+      int sx = Integer.parseInt(order[0]);
+      int sy = Integer.parseInt(order[1]) - 1;
+      int ex = Integer.parseInt(order[2]);
+      int ey = Integer.parseInt(order[3]);
+
+      int minus = 0;
+      int sum = 0;
+      for (int x = sx; x <= ex; x++) {
+        sum += map[x][ey];
+        minus += map[x][sy];
+      }
+      sb.append((sum - minus) + "\n");
     }
+    System.out.println(sb);
   }
 }
