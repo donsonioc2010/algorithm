@@ -1,36 +1,36 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import java.util.Scanner;
-
+//10986
 public class Main {
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  private static int N, M;
 
-  public static void main(String[] args) {
-    Scanner sc = new Scanner(System.in);
-    int N = sc.nextInt();
-    int M = sc.nextInt();
+  public static void main(String[] args) throws Exception {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    N = Integer.parseInt(st.nextToken());
+    M = Integer.parseInt(st.nextToken());
 
-    long[] S = new long[N];
-    long[] C = new long[M];
-    long answer = 0;
+    st = new StringTokenizer(br.readLine());
+    long[] ary = new long[N + 1];
+    long[] modAry = new long[M + 1];
 
-    //합 배열 제작
-    S[0] = sc.nextInt();
-    for (int i = 1; i < N; i++) {
-      S[i] = S[i - 1] + sc.nextInt();
-    }
-
-    for (int i = 0; i < N; i++) {
-      int remainder = (int) (S[i] % M);
-      if (remainder == 0) {
-        answer++;
+    long cnt = 0;
+    for (int i = 1; i <= N; i++) {
+      ary[i] = ary[i - 1] + Long.parseLong(st.nextToken());
+      int mod = (int) (ary[i] % M);
+      if (mod == 0) {
+        cnt++;
       }
-      C[remainder]++;
+      modAry[mod]++; // 모듈러 연산을 위해 필요하다.
     }
 
+    // 모듈러연산. 근데 잘모르겠슴
     for (int i = 0; i < M; i++) {
-      if (C[i] > 1) {
-        answer = answer + (C[i] * (C[i] - 1) / 2);
-      }
+      if (modAry[i] > 1)
+        cnt = (cnt + (modAry[i] * (modAry[i] - 1) / 2));
     }
-          System.out.println(answer);
+    System.out.println(cnt);
   }
 }
