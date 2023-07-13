@@ -1,24 +1,25 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int m = 0,n = sc.nextInt(), k = sc.nextInt();
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int []coin = new int[n];
-        getCoinCollection(coin, sc);
+  public static void main(String[] args) throws Exception {
+    int M = 0;
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N = Integer.parseInt(st.nextToken());
+    int K = Integer.parseInt(st.nextToken());
 
-        for(int i = n-1; i>=0; i--){
-            m += (k/coin[i]);
-            k = k%coin[i];
-        }
-        System.out.println(m);
+    int[] coin = new int[N];
+    for (int i = 0; i < N; i++) {
+      coin[i] = Integer.parseInt(br.readLine());
     }
 
-    static void getCoinCollection(int[] n, Scanner sc){
-        for(int i = 0; i < n.length; i++){
-            n[i] = sc.nextInt();
-        }
-        sc.close();
+    for (int i = N - 1; i >= 0; i--) {
+      M += (K / coin[i]);
+      K = K % coin[i];
     }
+    System.out.println(M);
+  }
 }
