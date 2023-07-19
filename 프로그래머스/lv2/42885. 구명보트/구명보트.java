@@ -1,22 +1,25 @@
 import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
 
 class Solution {
+  public static void main(String[] args) {
+    System.out.println(new Solution().solution(new int[] { 70, 50, 80, 50 }, 100));
+  }
+
   public int solution(int[] people, int limit) {
     Arrays.sort(people);
-    Deque<Integer> deque = new LinkedList<>(Arrays.asList(Arrays.stream(people).boxed().toArray(Integer[]::new)));
-
     int count = 0;
-    while (!deque.isEmpty()) {
-      if (deque.getLast() + deque.getFirst() > limit) {
-        deque.pollLast();
+    int sum = 0;
+    for (int weight : people) {
+      if (sum + weight < limit) {
+        sum += weight;
+      } else if (sum + weight == limit) {
+        count++;
+        sum = 0;
       } else {
-        deque.pollLast();
-        deque.pollFirst();
+        count++;
+        sum = weight;
       }
-      count++;
     }
-    return count;
+    return sum >0 ? count + 1 : count;
   }
 }
