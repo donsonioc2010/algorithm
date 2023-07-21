@@ -9,20 +9,13 @@ public class Main {
     boolean isMinus = true;
     int star = 1, space = line/2;
     for (int i = 1; i <= line; i++) {
-      for (int j = 1; j <= space; j++)
-        System.out.print(" ");
-      for (int j = 1; j <= star; j++)
-        System.out.print("*");
+      System.out.print(" ".repeat(space));
+      System.out.print("*".repeat(star));
       System.out.println();
-      if (i == (line / 2) + 1)
-        isMinus = false;
-      if (isMinus) {
-        space--;
-        star += 2;
-      } else {
-        space++;
-        star -= 2;
-      }
+
+      isMinus = i >= (line / 2) + 1 ? false : true;
+      space = isMinus ? space - 1 : space + 1;
+      star = isMinus ? star + 2 : star - 2;
     }
   }
 }
