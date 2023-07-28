@@ -1,19 +1,21 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int answer = fibo(sc.nextInt());
-        System.out.println(answer);
+  private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+  public static void main(String[] args) throws Exception {
+    int N = Integer.parseInt(br.readLine());
+    if (N <= 1) {
+      System.out.println(N);
+      return;
     }
-    public static int fibo(int n){
-        switch(n){
-            case 0:
-                return 0;
-            case 1:
-                return 1;
-            default:
-                return fibo(n -1) + fibo(n -2);
-        }
+    int[] ary = new int[N + 1];
+    ary[0] = 0;
+    ary[1] = 1;
+    for (int i = 2; i <= N; i++) {
+      ary[i] = ary[i - 1] + ary[i - 2];
     }
+    System.out.println(ary[N]);
+  }
 }
